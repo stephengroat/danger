@@ -420,7 +420,7 @@ RSpec.describe Danger::EnvironmentManager, use: :ci_helper do
         env = { "DANGER_USE_LOCAL_GIT" => "true" }
         fake_ui = double("Cork::Board")
         allow(Cork::Board).to receive(:new) { fake_ui }
-        allow(Danger::RequestSources::RequestSource).to receive(:available_request_sources) { [] }
+        allow(Danger::RequestSources::RequestSource).to receive(:available_request_sources).and_return([])
 
         expect(fake_ui).to receive(:title)
         expect(fake_ui).to receive(:puts).exactly(5).times

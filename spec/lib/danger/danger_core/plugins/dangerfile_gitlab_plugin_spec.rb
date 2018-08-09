@@ -2,6 +2,7 @@ RSpec.describe Danger::DangerfileGitLabPlugin, host: :gitlab do
   let(:env) { stub_env.merge("CI_MERGE_REQUEST_ID" => 593_728) }
   let(:dangerfile) { testing_dangerfile(env) }
   let(:plugin) { described_class.new(dangerfile) }
+
   before do
     stub_merge_request(
       "merge_request_593728_response",
@@ -82,7 +83,7 @@ RSpec.describe Danger::DangerfileGitLabPlugin, host: :gitlab do
   end
 
   describe "#html_link" do
-    it "should render a html link to the given file" do
+    it "renders a html link to the given file" do
       with_git_repo(origin: "git@gitlab.com:k0nserv/danger-test.git") do
         dangerfile.env.request_source.fetch_details
 

@@ -2,7 +2,7 @@ require "danger/commands/init_helpers/interviewer"
 
 RSpec.describe Danger::Interviewer do
   let(:cork) { double("cork") }
-  let(:interviewer) { Danger::Interviewer.new(cork) }
+  let(:interviewer) { described_class.new(cork) }
 
   describe "#link" do
     before do
@@ -11,7 +11,7 @@ RSpec.describe Danger::Interviewer do
 
     it "link URL is decorated" do
       interviewer.link("http://danger.systems/")
-      expect(interviewer).to have_received(:say).with(" -> \e[4mhttp://danger.systems/\e[0m\n")
+      expect(interviewer).to receive(:say).with(" -> \e[4mhttp://danger.systems/\e[0m\n")
     end
   end
 end

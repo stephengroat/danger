@@ -63,7 +63,7 @@ RSpec.describe Danger::HTTPCache do
     cache.write("testing_write", "pants")
     store = PStore.new(TEST_CACHE_FILE)
     store.transaction do
-      expect(store["testing_write"]).to_not be_nil
+      expect(store["testing_write"]).not_to be_nil
       expect(store["testing_write"][:value]).to eq("pants")
       expect(store["testing_write"][:updated_at]).to be_within(1).of(Time.now.to_i)
     end

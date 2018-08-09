@@ -92,7 +92,7 @@ RSpec.describe Danger::LocalGitRepo do
 
             result = source(valid_env)
             logs = nil
-            expect { logs = result.run_git("log --oneline -1000000".freeze) }.to_not raise_error
+            expect { logs = result.run_git("log --oneline -1000000".freeze) }.not_to raise_error
             expect(logs.split("\n")).to match_array [
               /#{git_sha_regex} testing a non UTF-8 string/,
               /#{git_sha_regex} Merge pull request #1234 from new-branch/,

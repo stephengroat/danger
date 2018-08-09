@@ -83,7 +83,7 @@ RSpec.describe Danger::Dangerfile, host: :github do
       file = make_temp_file ""
       dm = testing_dangerfile
 
-      expect(dm).to_not receive(:print_known_info)
+      expect(dm).not_to receive(:print_known_info)
       dm.parse file.path
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe Danger::Dangerfile, host: :github do
   # you're going to have a bad time if they share the class name. Make them unique.
 
   describe "initializing plugins" do
-    it "should add a plugin to the @plugins array" do
+    it "adds a plugin to the @plugins array" do
       class DangerTestAddingToArrayPlugin < Danger::Plugin; end
       allow(Danger::Plugin).to receive(:all_plugins).and_return([DangerTestAddingToArrayPlugin])
       dm = testing_dangerfile
@@ -102,14 +102,14 @@ RSpec.describe Danger::Dangerfile, host: :github do
       expect(dm.instance_variable_get("@plugins").length).to eq(1)
     end
 
-    it "should add an instance variable to the dangerfile" do
+    it "adds an instance variable to the dangerfile" do
       class DangerTestAddingInstanceVarPlugin < Danger::Plugin; end
       allow(ObjectSpace).to receive(:each_object).and_return([DangerTestAddingInstanceVarPlugin])
       dm = testing_dangerfile
       allow(dm).to receive(:core_dsls).and_return([])
       dm.init_plugins
 
-      expect { dm.test_adding_instance_var_plugin }.to_not raise_error
+      expect { dm.test_adding_instance_var_plugin }.not_to raise_error
       expect(dm.test_adding_instance_var_plugin.class).to eq(DangerTestAddingInstanceVarPlugin)
     end
   end
@@ -161,29 +161,30 @@ RSpec.describe Danger::Dangerfile, host: :github do
     end
 
     describe "table metadata" do
+      let(:dm) { testing_dangerfile }
+
       before do
-        @dm = testing_dangerfile
-        @dm.env.request_source.support_tokenless_auth = true
+        dm.env.request_source.support_tokenless_auth = true
 
         # Stub out the GitHub stuff
         pr_reviews_response = JSON.parse(fixture("github_api/pr_reviews_response"))
-        allow(@dm.env.request_source.client).to receive(:pull_request_reviews).with("artsy/eigen", "800").and_return(pr_reviews_response)
+        allow(dm.env.request_source.client).to receive(:pull_request_reviews).with("artsy/eigen", "800").and_return(pr_reviews_response)
         pr_response = JSON.parse(fixture("github_api/pr_response"))
-        allow(@dm.env.request_source.client).to receive(:pull_request).with("artsy/eigen", "800").and_return(pr_response)
+        allow(dm.env.request_source.client).to receive(:pull_request).with("artsy/eigen", "800").and_return(pr_response)
         issue_response = JSON.parse(fixture("github_api/issue_response"))
-        allow(@dm.env.request_source.client).to receive(:get).with("https://api.github.com/repos/artsy/eigen/issues/800").and_return(issue_response)
+        allow(dm.env.request_source.client).to receive(:get).with("https://api.github.com/repos/artsy/eigen/issues/800").and_return(issue_response)
         diff_response = diff_fixture("pr_diff_response")
-        allow(@dm.env.request_source.client).to receive(:pull_request).with("artsy/eigen", "800", accept: "application/vnd.github.v3.diff").and_return(diff_response)
+        allow(dm.env.request_source.client).to receive(:pull_request).with("artsy/eigen", "800", accept: "application/vnd.github.v3.diff").and_return(diff_response)
 
         # Use a known diff from Danger's history:
         # https://github.com/danger/danger/compare/98c4f7760bb16300d1292bb791917d8e4990fd9a...9a424ecd5ad7404fa71cf2c99627d2882f0f02ce
-        @dm.env.fill_environment_vars
-        @dm.env.scm.diff_for_folder(".", from: "9a424ecd5ad7404fa71cf2c99627d2882f0f02ce", to: "98c4f7760bb16300d1292bb791917d8e4990fd9a")
+        dm.env.fill_environment_vars
+        dm.env.scm.diff_for_folder(".", from: "9a424ecd5ad7404fa71cf2c99627d2882f0f02ce", to: "98c4f7760bb16300d1292bb791917d8e4990fd9a")
       end
 
       it "creates a table from a selection of core DSL attributes info" do
         # Check out the method hashes of all plugin info
-        data = @dm.method_values_for_plugin_hashes(@dm.core_dsl_attributes)
+        data = dm.method_values_for_plugin_hashes(dm.core_dsl_attributes)
 
         # Ensure consistent ordering
         data = sort_data(data)
@@ -201,7 +202,7 @@ RSpec.describe Danger::Dangerfile, host: :github do
           end
         end
 
-        data = @dm.method_values_for_plugin_hashes(@dm.external_dsl_attributes)
+        data = dm.method_values_for_plugin_hashes(dm.external_dsl_attributes)
         # Ensure consistent ordering, and only extract the keys
         data = sort_data(data).map { |d| d.first.to_sym }
 
@@ -215,7 +216,7 @@ RSpec.describe Danger::Dangerfile, host: :github do
       end
 
       it "skips raw PR/MR JSON, and diffs" do
-        data = @dm.method_values_for_plugin_hashes(@dm.external_dsl_attributes)
+        data = dm.method_values_for_plugin_hashes(dm.external_dsl_attributes)
 
         data_hash = data
           .collect { |v| [v.first, v.last] }

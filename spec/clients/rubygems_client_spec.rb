@@ -5,6 +5,7 @@ RSpec.describe Danger::RubyGemsClient do
     context "rubygems.org is operational" do
       it "returns latest danger version" do
         latest_version_json = IO.read("spec/fixtures/rubygems_api/api_v1_versions_danger_latest.json")
+
         allow(Faraday).to receive_message_chain(:get, :body) { latest_version_json }
 
         result = described_class.latest_danger_version

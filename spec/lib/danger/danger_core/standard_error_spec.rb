@@ -1,4 +1,6 @@
 RSpec.describe Danger::DSLError do
+  subject(:testclass) { described_class.new(description, file_path, backtrace) }
+
   let(:file_path) do
     Pathname.new(File.join("spec", "fixtures", "dangerfile_with_error"))
   end
@@ -13,8 +15,6 @@ RSpec.describe Danger::DSLError do
       "#{File.join('fake', 'path', 'dangerfile.rb')}:199:in `eval"
     ]
   end
-
-  subject { Danger::DSLError.new(description, file_path, backtrace) }
 
   describe "#message" do
     context "when danger version outdated" do
@@ -39,7 +39,7 @@ RSpec.describe Danger::DSLError do
           " #  -------------------------------------------"
         ]
 
-        expect(subject.message.split("\n")).to eq expectation
+        expect(testclass.message.split("\n")).to eq expectation
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe Danger::DSLError do
           " #  -------------------------------------------"
         ]
 
-        expect(subject.message.split("\n")).to eq expectation
+        expect(testclass.message.split("\n")).to eq expectation
       end
     end
   end
@@ -91,11 +91,11 @@ RSpec.describe Danger::DSLError do
           "```"
         ]
 
-        subject.to_markdown.message.split("\n").each_with_index do |chunk, index|
+        testclass.to_markdown.message.split("\n").each_with_index do |chunk, index|
           expect(chunk).to eq expectation[index]
         end
 
-        expect(subject.to_markdown.message.split("\n")).to eq expectation
+        expect(testclass.to_markdown.message.split("\n")).to eq expectation
       end
     end
 
@@ -119,7 +119,7 @@ RSpec.describe Danger::DSLError do
           "```"
         ]
 
-        expect(subject.to_markdown.message.split("\n")).to eq expectation
+        expect(testclass.to_markdown.message.split("\n")).to eq expectation
       end
     end
   end

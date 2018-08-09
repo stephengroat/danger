@@ -4,7 +4,7 @@ require "open3"
 RSpec.describe Danger::Local do
   context "prints help" do
     it "danger local --help flag prints help" do
-      stdout, = Open3.capture3("danger local -h")
+      stdout, = Open3.capture3("danger local --help")
       expect(stdout).to include "Usage"
     end
 

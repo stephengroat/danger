@@ -52,9 +52,7 @@ RSpec.describe Danger::PluginParser do
 
     # Skipping this test for windows, pathing gets complex, and no-one
     # is generating gem docs on windows.
-    if Gem.win_platform?
-      expect(1).to eq(1)
-    else
+    unless Gem.win_platform?
       expect(sanitized_json).to eq File.read(fixture)
     end
   end
@@ -72,9 +70,7 @@ RSpec.describe Danger::PluginParser do
 
     # Skipping this test for windows, pathing gets complex, and no-one
     # is generating gem docs on windows.
-    if Gem.win_platform?
-      expect(1).to eq(1)
-    else
+    unless Gem.win_platform?
       expect(sanitized_json).to eq File.read(fixture)
     end
   end

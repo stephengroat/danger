@@ -78,7 +78,7 @@ RSpec.describe Danger::Executor, use: :ci_helper do
         end
       end
 
-      it "not raises error on TeamCity (GitLab)" do
+      it "not raises error on TeamCity (Github)" do
         with_teamcity_setup_github_and_is_a_pull_request do |system_env|
           expect { described_class.new(system_env) }.not_to raise_error
         end
@@ -230,8 +230,8 @@ RSpec.describe Danger::Executor, use: :ci_helper do
           allow(fake_client).to receive(:pull_request) { swiftweekly_pr_89_as_json(head_sha, base_sha) }
           allow(fake_client).to receive(:get) { swiftweekly_issues_89_as_json }
           allow(fake_client).to receive(:issue_comments) { swiftweekly_issue_89_comments_as_json }
-          allow(fake_client).to receive(:delete_comment) { true }
-          allow(fake_client).to receive(:create_status) { true }
+          allow(fake_client).to receive(:delete_comment).and_return(true)
+          allow(fake_client).to receive(:create_status).and_return(true)
 
           pretend_we_are_in_the_travis do
             Danger::Executor.new(ENV).run(dangerfile_path: "Dangerfile")

@@ -175,9 +175,10 @@ RSpec.describe Danger::TeamCity do
 
     describe "#new" do
       let(:api) { double("Danger::RequestSources::BitbucketCloudAPI") }
+
       before do
         allow(Danger::RequestSources::BitbucketCloudAPI).to receive(:new) { api }
-        allow(api).to receive(:pull_request_id) { 42 }
+        allow(api).to receive(:pull_request_id).and_return(42)
       end
 
       it "sets the repo_slug" do

@@ -1,4 +1,5 @@
 # Defaults can be found here: https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+require: rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.0
@@ -150,4 +151,28 @@ Style/RaiseArgs:
   Enabled: false
 
 Layout/IndentHeredoc:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/AnyInstance:
   Enabled: false

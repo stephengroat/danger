@@ -8,19 +8,19 @@ RSpec.describe Danger::RequestSources::GitHubSource::Review, host: :github do
   let(:client) { double(Octokit::Client) }
 
   describe "submit" do
-    subject do
+    subject(:review) do
       Danger::RequestSources::GitHubSource::Review.new(client, stub_ci)
     end
 
     before do
-      subject.start
+      review.start
     end
 
     it "submits review request with correct body" do
-      subject.message("Hi")
-      subject.markdown("Yo")
-      subject.warn("I warn you")
-      subject.fail("This is bad, really bad")
+      review.message("Hi")
+      review.markdown("Yo")
+      review.warn("I warn you")
+      review.fail("This is bad, really bad")
 
       messages = [Danger::Violation.new("Hi", true)]
       warnings = [Danger::Violation.new("I warn you", true)]
@@ -35,127 +35,127 @@ RSpec.describe Danger::RequestSources::GitHubSource::Review, host: :github do
                                        template: "github")
 
       expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_REQUEST_CHANGES, body: expected_body)
-      subject.submit
+      review.submit
     end
 
     context "when there are only messages" do
       before do
-        subject.message("Hi")
+        review.message("Hi")
       end
 
       it "approves the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_APPROVE, body: anything)
-        subject.submit
+        review.submit
       end
     end
 
     context "when there are only markdowns" do
       before do
-        subject.markdown("Hi")
+        review.markdown("Hi")
       end
 
       it "approves the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_APPROVE, body: anything)
-        subject.submit
+        review.submit
       end
     end
 
     context "when there are only warnings" do
       before do
-        subject.warn("Hi")
+        review.warn("Hi")
       end
 
       it "approves the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_APPROVE, body: anything)
-        subject.submit
+        review.submit
       end
     end
 
     context "when there are only errors" do
       before do
-        subject.fail("Yo")
+        review.fail("Yo")
       end
 
       it "suggests changes to the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_REQUEST_CHANGES, body: anything)
-        subject.submit
+        review.submit
       end
     end
 
     context "when there are errors" do
       before do
-        subject.message("Hi")
-        subject.markdown("Yo")
-        subject.warn("I warn you")
-        subject.fail("This is bad, really bad")
+        review.message("Hi")
+        review.markdown("Yo")
+        review.warn("I warn you")
+        review.fail("This is bad, really bad")
       end
 
       it "suggests changes to the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_REQUEST_CHANGES, body: anything)
-        subject.submit
+        review.submit
       end
     end
 
     context "when there are no errors" do
       before do
-        subject.message("Hi")
-        subject.markdown("Yo")
-        subject.warn("I warn you")
+        review.message("Hi")
+        review.markdown("Yo")
+        review.warn("I warn you")
       end
 
       it "sapproves the pr" do
         expect(client).to receive(:create_pull_request_review).with(stub_ci.repo_slug, stub_ci.pull_request_id, event: Danger::RequestSources::GitHubSource::Review::EVENT_APPROVE, body: anything)
-        subject.submit
+        review.submit
       end
     end
   end
 
   context "when initialized without review json" do
-    subject do
+    subject(:review) do
       Danger::RequestSources::GitHubSource::Review.new(client, stub_ci)
     end
 
     describe "id" do
       it "nil" do
-        expect(subject.id).to be nil
+        expect(review.id).to be nil
       end
     end
 
     describe "status" do
       it "returns a pending status" do
-        expect(subject.status).to eq Danger::RequestSources::GitHubSource::Review::STATUS_PENDING
+        expect(review.status).to eq Danger::RequestSources::GitHubSource::Review::STATUS_PENDING
       end
     end
 
     describe "body" do
       it "returns an empty string" do
-        expect(subject.body).to eq ""
+        expect(review.body).to eq ""
       end
     end
   end
 
   context "when initialized with review json" do
-    let(:review_json) { JSON.parse(fixture("github_api/pr_review_response")) }
-
-    subject do
+    subject(:review) do
       Danger::RequestSources::GitHubSource::Review.new(client, stub_ci, review_json)
     end
 
+    let(:review_json) { JSON.parse(fixture("github_api/pr_review_response")) }
+
     describe "id" do
       it "returns an id of request review" do
-        expect(subject.id).to eq 15_629_060
+        expect(review.id).to eq 15_629_060
       end
     end
 
     describe "status" do
       it "returns a status from request review json" do
-        expect(subject.status).to eq Danger::RequestSources::GitHubSource::Review::STATUS_APPROVED
+        expect(review.status).to eq Danger::RequestSources::GitHubSource::Review::STATUS_APPROVED
       end
     end
 
     describe "body" do
       it "returns a body from request review json" do
-        expect(subject.body).to eq "Looks good"
+        expect(review.body).to eq "Looks good"
       end
     end
   end

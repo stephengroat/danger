@@ -23,7 +23,7 @@ script:
   - git config --global user.email "danger@example.com"
   - git config --global user.name "Danger McShane"
   - echo "Running Tests"
-  - bundle exec rake spec
+  - bundle exec rake
   - echo "Linting the documentation for Danger's internal plugins"
   - bundle exec danger plugins lint lib/danger/danger_core/plugins/*.rb --warnings-as-errors
   - echo "Running the Dangerfile for this repo"

@@ -60,7 +60,7 @@ RSpec.describe Danger::CircleAPI do
     }
 
     build_response = JSON.parse(fixture("circle_build_response"), symbolize_names: true)
-    allow_any_instance_of(Danger::CircleAPI).to receive(:fetch_build).with("artsy/eigen", "1500", nil).and_return(build_response)
+    allow_any_instance_of(described_class).to receive(:fetch_build).with("artsy/eigen", "1500", nil).and_return(build_response)
 
     result = Danger::CircleCI.new(env)
 
@@ -78,9 +78,9 @@ RSpec.describe Danger::CircleAPI do
       "CIRCLE_PROJECT_REPONAME" => "eigen"
     }
     build_response = JSON.parse(fixture("circle_build_response"), symbolize_names: true)
-    allow_any_instance_of(Danger::CircleAPI).to receive(:fetch_build).with("artsy/eigen", "1500", "token2").and_return(build_response)
+    allow_any_instance_of(described_class).to receive(:fetch_build).with("artsy/eigen", "1500", "token2").and_return(build_response)
 
-    result = Danger::CircleAPI.new.pull_request_url(env)
+    result = described_class.new.pull_request_url(env)
 
     expect(result).to eq("https://github.com/artsy/eigen/pull/2606")
   end
@@ -93,9 +93,9 @@ RSpec.describe Danger::CircleAPI do
       "CIRCLE_PROJECT_REPONAME" => "eigen"
     }
     build_response = JSON.parse(fixture("circle_build_response"), symbolize_names: true)
-    allow_any_instance_of(Danger::CircleAPI).to receive(:fetch_build).with("artsy/eigen", "1500", "token").and_return(build_response)
+    allow_any_instance_of(described_class).to receive(:fetch_build).with("artsy/eigen", "1500", "token").and_return(build_response)
 
-    result = Danger::CircleAPI.new.pull_request_url(env)
+    result = described_class.new.pull_request_url(env)
 
     expect(result).to eq("https://github.com/artsy/eigen/pull/2606")
   end
@@ -108,9 +108,9 @@ RSpec.describe Danger::CircleAPI do
       "CIRCLE_PROJECT_REPONAME" => "eigen"
     }
     build_response = JSON.parse(fixture("circle_build_no_pr_response"), symbolize_names: true)
-    allow_any_instance_of(Danger::CircleAPI).to receive(:fetch_build).with("artsy/eigen", "1500", "token").and_return(build_response)
+    allow_any_instance_of(described_class).to receive(:fetch_build).with("artsy/eigen", "1500", "token").and_return(build_response)
 
-    result = Danger::CircleAPI.new.pull_request?(env)
+    result = described_class.new.pull_request?(env)
 
     expect(result).to be_falsy
   end

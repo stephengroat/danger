@@ -2,7 +2,7 @@ require "danger/commands/init"
 
 RSpec.describe Danger::Init do
   describe "#current_repo_slug" do
-    let(:command) { Danger::Init.new CLAide::ARGV.new([]) }
+    let(:command) { described_class.new CLAide::ARGV.new([]) }
 
     context "with git url" do
       it "returns correct results" do

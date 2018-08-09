@@ -18,11 +18,11 @@ RSpec.describe Danger::Jenkins do
 
   describe "errors" do
     it "raises an error when no env passed in" do
-      expect { Danger::Jenkins.new(nil) }.to raise_error Danger::Jenkins::EnvNotFound
+      expect { described_class.new(nil) }.to raise_error Danger::Jenkins::EnvNotFound
     end
 
     it "raises an error when empty env passed in" do
-      expect { Danger::Jenkins.new({}) }.to raise_error Danger::Jenkins::EnvNotFound
+      expect { described_class.new({}) }.to raise_error Danger::Jenkins::EnvNotFound
     end
   end
 

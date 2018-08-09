@@ -7,7 +7,7 @@ RSpec.describe Danger::RequestSources::BitbucketCloud, host: :bitbucket_cloud do
   let(:bs) { Danger::RequestSources::BitbucketCloud.new(stub_ci, env) }
 
   describe "#new" do
-    it "should not raise uninitialized constant error" do
+    it "does not raise uninitialized constant error" do
       expect { described_class.new(stub_ci, env) }.not_to raise_error
     end
   end

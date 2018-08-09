@@ -4,7 +4,7 @@ require "open3"
 RSpec.describe Danger::PR do
   context "prints help" do
     it "danger pr --help flag prints help" do
-      stdout, = Open3.capture3("danger pr -h")
+      stdout, = Open3.capture3("danger pr --help")
       expect(stdout).to include "Usage"
     end
 
@@ -46,7 +46,7 @@ RSpec.describe Danger::PR do
 
     it "dangerfile can be set" do
       argv = CLAide::ARGV.new(["--dangerfile=/Users/Orta/Dangerfile"])
-      allow(File).to receive(:exist?) { true }
+      allow(File).to receive(:exist?).and_return(true)
 
       result = described_class.new(argv)
 

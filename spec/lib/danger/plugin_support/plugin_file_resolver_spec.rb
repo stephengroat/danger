@@ -4,7 +4,7 @@ RSpec.describe Danger::PluginFileResolver do
   describe "#resolve" do
     context "Given list of gems" do
       it "resolves for gems" do
-        resolver = Danger::PluginFileResolver.new(["danger", "rails"])
+        resolver = described_class.new(["danger", "rails"])
 
         expect(Danger::GemsResolver).to receive_message_chain(:new, :call)
 

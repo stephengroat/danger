@@ -4,7 +4,7 @@ RSpec.describe Danger do
   context "when installed danger is outdated and an error is raised" do
     before do
       stub_const("Danger::VERSION", "1.0.0")
-      allow(Danger::RubyGemsClient).to receive(:latest_danger_version) { "2.0.0" }
+      allow(Danger::RubyGemsClient).to receive(:latest_danger_version).and_return("2.0.0")
     end
 
     it "prints an upgrade message" do
@@ -25,7 +25,7 @@ RSpec.describe Danger do
   describe ".gem_path" do
     context "when danger gem found" do
       it "returns danger gem path" do
-        result = Danger.gem_path
+        result = described_class.gem_path
 
         expect(result).to match(/danger/i)
       end
@@ -33,28 +33,28 @@ RSpec.describe Danger do
 
     context "when danger gem folder not found" do
       it "raises an error" do
-        allow(Gem::Specification).to receive(:find_all_by_name) { [] }
+        allow(Gem::Specification).to receive(:find_all_by_name).and_return([])
 
-        expect { Danger.gem_path }.to raise_error("Couldn't find gem directory for 'danger'")
+        expect { described_class.gem_path }.to raise_error("Couldn't find gem directory for 'danger'")
       end
     end
   end
 
   describe ".danger_outdated?" do
     it "latest danger > local danger version" do
-      allow(Danger::RubyGemsClient).to receive(:latest_danger_version) { "2.0.0" }
+      allow(Danger::RubyGemsClient).to receive(:latest_danger_version).and_return("2.0.0")
       stub_const("Danger::VERSION", "1.0.0")
 
-      result = Danger.danger_outdated?
+      result = described_class.danger_outdated?
 
       expect(result).to eq "2.0.0"
     end
 
     it "latest danger < local danger version" do
-      allow(Danger::RubyGemsClient).to receive(:latest_danger_version) { "1.0.0" }
+      allow(Danger::RubyGemsClient).to receive(:latest_danger_version).and_return("1.0.0")
       stub_const("Danger::VERSION", "2.0.0")
 
-      result = Danger.danger_outdated?
+      result = described_class.danger_outdated?
 
       expect(result).to be false
     end

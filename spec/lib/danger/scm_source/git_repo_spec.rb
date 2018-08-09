@@ -14,70 +14,70 @@ RSpec.describe Danger::GitRepo, host: :github do
   end
 
   describe "#diff_for_folder" do
+    let(:dm) { testing_dangerfile }
+
     it "fetches if cannot find commits, raises if still can't find after fetched" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
-
-        allow(@dm.env.scm).to receive(:exec).and_return("")
+        allow(dm.env.scm).to receive(:exec).and_return("")
         # This is the thing we care about
-        allow(@dm.env.scm).to receive(:exec).with("fetch")
+        allow(dm.env.scm).to receive(:exec).with("fetch")
 
         expect do
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
         end.to raise_error(RuntimeError, /doesn't exist/)
       end
     end
 
     it "passes commits count in branch to git log" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
+        dm = testing_dangerfile
 
         expect_any_instance_of(Git::Base).to(
           receive(:log).with(1).and_call_original
         )
 
-        @dm.env.scm.diff_for_folder(dir)
+        dm.env.scm.diff_for_folder(dir)
       end
     end
   end
 
   describe "Return Types" do
+    let(:dm) { testing_dangerfile }
+
     it "#modified_files returns a FileList object" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
-        @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+        dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-        expect(@dm.git.modified_files.class).to eq(Danger::FileList)
+        expect(dm.git.modified_files.class).to eq(Danger::FileList)
       end
     end
 
     it "#added_files returns a FileList object" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
-        @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+        dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-        expect(@dm.git.added_files.class).to eq(Danger::FileList)
+        expect(dm.git.added_files.class).to eq(Danger::FileList)
       end
     end
 
     it "#deleted_files returns a FileList object" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
-        @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+        dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-        expect(@dm.git.deleted_files.class).to eq(Danger::FileList)
+        expect(dm.git.deleted_files.class).to eq(Danger::FileList)
       end
     end
   end
 
   describe "with files" do
+    let(:dm) { testing_dangerfile }
+
     it "handles adding a new file to a git repo" do
       with_git_repo do |dir|
-        @dm = testing_dangerfile
-        @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+        dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-        expect(@dm.git.added_files).to eq(Danger::FileList.new(["file2"]))
-        expect(@dm.git.diff_for_file("file2")).not_to be_nil
+        expect(dm.git.added_files).to eq(Danger::FileList.new(["file2"]))
+        expect(dm.git.diff_for_file("file2")).not_to be_nil
       end
     end
 
@@ -94,9 +94,8 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git add . --all`
           `git commit -m "another"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
-          expect(@dm.git.deleted_files).to eq(Danger::FileList.new(["file"]))
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          expect(dm.git.deleted_files).to eq(Danger::FileList.new(["file"]))
         end
       end
     end
@@ -114,11 +113,10 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git add .`
           `git commit -m "another"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
           # Need to compact here because c50713a changes make AppVeyor fail
-          expect(@dm.git.modified_files.compact).to eq(Danger::FileList.new(["file"]))
+          expect(dm.git.modified_files.compact).to eq(Danger::FileList.new(["file"]))
         end
       end
     end
@@ -139,18 +137,19 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git mv file "#{subfolder}"`
           `git commit -m "another"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
           # Need to compact here because c50713a changes make AppVeyor fail
-          expect(@dm.git.modified_files.compact).to eq(Danger::FileList.new(["file"]))
-          expect(@dm.git.diff_for_file("file")).not_to be_nil
+          expect(dm.git.modified_files.compact).to eq(Danger::FileList.new(["file"]))
+          expect(dm.git.diff_for_file("file")).not_to be_nil
         end
       end
     end
   end
 
   describe "lines of code" do
+    let(:dm) { testing_dangerfile }
+
     it "handles code insertions as expected" do
       Dir.mktmpdir do |dir|
         Dir.chdir dir do
@@ -165,10 +164,9 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git add .`
           `git commit -m "another"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-          expect(@dm.git.insertions).to eq(3)
+          expect(dm.git.insertions).to eq(3)
         end
       end
     end
@@ -187,21 +185,21 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git add .`
           `git commit -m "another"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-          expect(@dm.git.deletions).to eq(1)
+          expect(dm.git.deletions).to eq(1)
         end
       end
     end
 
     describe "#commits" do
+      let(:dm) { testing_dangerfile }
+
       it "returns the commits" do
         with_git_repo do |dir|
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "new")
 
-          messages = @dm.git.commits.map(&:message)
+          messages = dm.git.commits.map(&:message)
           expect(messages).to eq(["another"])
         end
       end
@@ -209,6 +207,8 @@ RSpec.describe Danger::GitRepo, host: :github do
   end
 
   describe "#renamed_files" do
+    let(:dm) { testing_dangerfile }
+
     it "returns array of hashes with names before and after" do
       Dir.mktmpdir do |dir|
         Dir.chdir dir do
@@ -239,8 +239,7 @@ RSpec.describe Danger::GitRepo, host: :github do
           `git add -A .`
           `git commit -m "Rename files"`
 
-          @dm = testing_dangerfile
-          @dm.env.scm.diff_for_folder(dir, from: "master", to: "rename_files")
+          dm.env.scm.diff_for_folder(dir, from: "master", to: "rename_files")
 
           expectation = [
             { before: "first/a", after: "a" },
@@ -248,7 +247,7 @@ RSpec.describe Danger::GitRepo, host: :github do
             { before: "c", after: "second/c" }
           ]
 
-          expect(@dm.git.renamed_files).to eq(expectation)
+          expect(dm.git.renamed_files).to eq(expectation)
         end
       end
     end

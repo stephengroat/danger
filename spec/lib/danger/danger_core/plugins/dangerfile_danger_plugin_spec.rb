@@ -9,7 +9,7 @@ RSpec.describe Danger::Dangerfile::DSL, host: :github do
       it "supports exact paths" do
         dm.danger.import_plugin("spec/fixtures/plugins/example_exact_path.rb")
 
-        expect { dm.example_exact_path }.to_not raise_error
+        expect { dm.example_exact_path }.not_to raise_error
         expect(dm.example_exact_path.echo).to eq("Hi there exact")
       end
 
